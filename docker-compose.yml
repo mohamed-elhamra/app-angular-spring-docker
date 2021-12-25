@@ -1,0 +1,52 @@
+# Docker Compose file Reference (https://docs.docker.com/compose/compose-file/)
+version: '3'
+
+#Define services
+services:
+
+  #PostgreSQL Database for the application
+  app-postgres:
+    image: "mysql:5.7"
+    restart: always
+    container_name: app-postgres
+    #Volume mounted for database for the storage
+    volumes:
+      - mysql-db:/var/lib/mysql
+      
+    #Environment variable for DB name, user and password
+    environment:
+      - MYSQL_DATABASE=mohamed
+      - MYSQL_USER=mohamed
+      - MYSQL_PASSWORD=mohamed
+      - MYSQL_ROOT_PASSWORD=mohamed
+
+  #Back-end Spring Boot Application
+  api:
+    #The docker file in api build the jar and provides the docker image with the following name.
+    build: ./api
+    container_name: api
+
+    #Environment variables for Spring Boot Application.
+    environment:
+      - DB_SERVER=app-postgres
+      - MYSQL_DATABASE=mohamed
+      - MYSQL_USER=mohamed
+      - MYSQL_PASSWORD=mohamed
+      - MYSQL_ROOT_PASSWORD=mohamed
+    ports:
+      - 8081:8080 # Forward the exposed port 8080 on the container to port 8080 on the host machine
+    links:
+      - app-postgres
+
+  #Fron-end Angular Application
+  app-ui:
+    build: ./angular-app
+    container_name: app-ui
+    ports:
+      - 4200:80
+    links:
+      - api
+
+#Volumes for DB data
+volumes:
+  mysql-db:
