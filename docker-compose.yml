@@ -5,10 +5,10 @@ version: '3'
 services:
 
   #PostgreSQL Database for the application
-  app-postgres:
+  db:
     image: "mysql:5.7"
     restart: always
-    container_name: app-postgres
+    container_name: db
     #Volume mounted for database for the storage
     volumes:
       - mysql-db:/var/lib/mysql
@@ -28,20 +28,20 @@ services:
 
     #Environment variables for Spring Boot Application.
     environment:
-      - DB_SERVER=app-postgres
+      - DB_SERVER=db
       - MYSQL_DATABASE=mohamed
       - MYSQL_USER=mohamed
       - MYSQL_PASSWORD=mohamed
       - MYSQL_ROOT_PASSWORD=mohamed
     ports:
-      - 8081:8080 # Forward the exposed port 8080 on the container to port 8080 on the host machine
+      - 8081:8081 # Forward the exposed port 8080 on the container to port 8080 on the host machine
     links:
-      - app-postgres
+      - db
 
   #Fron-end Angular Application
-  app-ui:
+  front:
     build: ./angular-app
-    container_name: app-ui
+    container_name: front
     ports:
       - 4200:80
     links:
